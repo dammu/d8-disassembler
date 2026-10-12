@@ -6,16 +6,16 @@ on:
       v8_branch:
         description: 'V8 Version / Branch'
         required: true
-        default: '13.8.258.18'
+        default: '13.2.152.41'
   push:
-    branches:
-      - main
+    branches-ignore:
+      - "**"
 
 jobs:
   build:
     runs-on: windows-latest
     env:
-      V8_BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.v8_branch || '13.8.258.18' }}
+      V8_BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.v8_branch || '13.2.152.41' }}
       DEPOT_TOOLS_WIN_TOOLCHAIN: 0
 
     steps:
@@ -46,12 +46,6 @@ jobs:
           git checkout $env:V8_BRANCH
           gclient sync -v
 
-      - name: Upload Source
-        uses: actions/upload-artifact@v4
-        with:
-          name: v8-src-${{ env.V8_BRANCH }}
-          path: target/v8/src
-          compression-level: 9
 
       - name: Patch V8
         # language=PowerShell
